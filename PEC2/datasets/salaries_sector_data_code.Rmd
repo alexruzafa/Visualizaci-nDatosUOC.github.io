@@ -1,0 +1,193 @@
+---
+title: 'ViolinPlot'
+author: 'Autor: Alex Ruzafa Baos'
+date: "NOVIEMBRE 2024"
+output:
+  html_document:
+    highlight: default
+    number_sections: no
+    theme: cosmo
+    toc: yes
+    toc_depth: 2
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+---
+
+#Violin Plot Salarios Sector Data
+
+```{r}
+library(plotly)
+
+df <- read.csv("salaries_sector_data.csv")
+
+fig <- df %>%
+  plot_ly(
+    y = ~salary_in_usd,
+    type = 'violin',
+    box = list(
+      visible = T
+    ),
+    meanline = list(
+      visible = T
+    ),
+    x0 = 'Salario Total'
+  ) 
+
+fig <- fig %>%
+  layout(
+    yaxis = list(
+      title = "",
+      zeroline = F
+    )
+  )
+
+fig
+```
+
+
+#Violin Plot Salarios Sector Data por Año
+
+```{r}
+library(plotly)
+
+df <- read.csv("salaries_sector_data.csv")
+
+fig <- df %>%
+  plot_ly(
+    x = ~work_year,
+    y = ~salary_in_usd,
+    split = ~work_year,
+    type = 'violin',
+    box = list(
+      visible = T
+    ),
+    meanline = list(
+      visible = T
+    )
+  ) 
+
+fig <- fig %>%
+  layout(
+    xaxis = list(
+      title = "Year"
+    ),
+    yaxis = list(
+      title = "Salario Total",
+      zeroline = F
+    )
+  )
+
+fig
+```
+
+
+
+#Violin Plot Salarios Sector Data por País
+
+
+```{r}
+
+library(dplyr)
+library(plotly)
+
+# Leer el archivo CSV
+df <- read.csv("salaries_sector_data.csv")
+
+# Filtrar las filas donde employee_residence sea ES, US, FR, GB o IN
+df_filtered <- df %>%
+  filter(employee_residence %in% c("ES", "US", "FR", "GB", "IN"))
+
+# Crear el violin plot
+fig <- df_filtered %>%
+  plot_ly(
+    x = ~employee_residence,
+    y = ~salary_in_usd,
+    split = ~employee_residence,
+    type = 'violin',
+    box = list(
+      visible = T
+    ),
+    meanline = list(
+      visible = T
+    )
+  )
+
+# Personalizar el layout
+fig <- fig %>%
+  layout(
+    xaxis = list(
+      title = "Pais"
+    ),
+    yaxis = list(
+      title = "Salario Total",
+      zeroline = F
+    )
+  )
+
+fig
+
+
+```
+
+
+#Violin Plot Salarios Sector Data por Experiencia Comparativa España y USA
+
+```{r}
+
+library(dplyr)
+library(plotly)
+
+# Leer el archivo CSV
+df <- read.csv("salaries_sector_data.csv")
+
+# Filtrar las filas donde employee_residence sea ES, US, FR, GB o IN
+df_filtered <- df %>%
+  filter(employee_residence %in% c("ES", "US"))
+
+# Crear el violin plot
+fig <- df_filtered %>%
+  plot_ly(type = 'violin') 
+fig <- fig %>%
+  add_trace(
+    x = ~experience_level[df$employee_residence == 'ES'],
+    y = ~salary_in_usd[df$employee_residence == 'ES'],
+    legendgroup = 'ES',
+    scalegroup = 'ES',
+    name = 'ES',
+    box = list(
+      visible = T
+    ),
+    meanline = list(
+      visible = T
+    ),
+    color = I("blue")
+  ) 
+fig <- fig %>%
+  add_trace(
+    x = ~experience_level[df$employee_residence == 'US'],
+    y = ~salary_in_usd[df$employee_residence == 'US'],
+    legendgroup = 'US',
+    scalegroup = 'US',
+    name = 'US',
+    box = list(
+      visible = T
+    ),
+    meanline = list(
+      visible = T
+    ),
+    color = I("pink")
+  ) 
+
+fig <- fig %>%
+  layout(
+    yaxis = list(
+      zeroline = F
+    ),
+    violinmode = 'group'
+  )
+
+fig
+
+```
+
